@@ -1,4 +1,7 @@
-![image](https://github.com/caiocasagrande/taxi/blob/main/images/portugal_map.png)
+<p align="center">
+  <img src="https://github.com/caiocasagrande/taxi/blob/main/images/portugal_map.png" alt="image">
+</p>
+
 # Previsão de pontos finais de trajetórias de táxi
 Projeto de previsões de pontos de chegada em corridas de táxi na cidade do Porto, Portugal.
 
@@ -6,7 +9,7 @@ Projeto de previsões de pontos de chegada em corridas de táxi na cidade do Por
 ### Sobre o Negócio:
 - Com as novas tecnologias atuais, a indústria de táxis precisou se reinventar para não ficar para trás em relação aos seus novos concorrentes;
 - Um dos desafios é a adaptação ao novo sistema eletrônico de despacho em tempo real, instalados nos veículos.
-- 
+
 ### Sobre o Problema:
 - O sistema conta com um problema: a falta de informação sobre o destino final das corridas, pois os motoristas não indicam o destino;
 - Com as mensagens unicast (1:1) os despachantes precisam identificar corretamente qual táxi enviar para uma localização de coleta, o que se torna difícil quando não se sabe o destino final dos táxis em serviço;
