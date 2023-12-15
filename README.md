@@ -13,20 +13,51 @@ Projeto de previsões de pontos de chegada em corridas de táxi na cidade do Por
 ### Sobre o Problema:
 - O sistema conta com um problema: a falta de informação sobre o destino final das corridas, pois os motoristas não indicam o destino;
 - Com as mensagens unicast (1:1) os despachantes precisam identificar corretamente qual táxi enviar para uma localização de coleta, o que se torna difícil quando não se sabe o destino final dos táxis em serviço;
-Em razão desse problema, a proposta é desenvolver um modelo preditivo que seja capaz de inferir o destino final de corridas de táxi com base em suas localizações de coleta.
+- Em razão desse problema, **a proposta é desenvolver um modelo preditivo que seja capaz de inferir o destino final de corridas de táxi com base em suas localizações de coleta.**
 
 ### Benefícios da solução:
 Assim, é possível melhorar a eficiência do sistema de despacho eletrônico de taxistas, permitindo uma identificação ágil de qual motorista encaminhar para cada solicitação de corrida, especialmente durante períodos de alta demanda.
 
 ## Objetivos
 - Entender o problema de negócio
-- Análise de dados
-- Modelo de previsão
+- Análise dos dados das viagens
+- Modelo de previsão de ponto de destino
 - PowerPoint descrevendo o problema e conclusões
-- Enviar notebook (.ipynb) e apresentação (.pdf)
 
 ## Dataset
-...
+
+### Data Overview:
+- **Essa é a etapa em que temos o primeiro contato com os dados, para saber com o que vamos lidar no projeto;**
+- É importante se atentar às dimensões do dataset, aos tipos das variáveis, quais colunas possuem dados faltantes e qual a sua participação no todo, por exemplo;
+- Outra prática comum é realizar uma breve descrição das colunas, como:
+
+<div align="center">
+  
+| Variável        | Descrição                                    | Tipo       |
+|-----------------|----------------------------------------------|------------|
+| `TRIP_ID`       | Identificação de cada viagem.                | `int`      |
+| `CALL_TYPE`     | Identifica a maneira que o serviço aconteceu (A, B ou C)        | `object`   |
+| `ORIGIN_CALL`   | Identificação de número de telefone que pediu táxi | `float` |
+| `ORIGIN_STAND`  | Ponto de táxi em que o pedido foi realizado  | `float` |
+| `TAXI_ID`       | Identificação do Táxi                        | `int`      |
+| `TIMESTAMP`     | Timestamp indicando quando ocorreu a corrida | `int`      |
+| `DAY_TYPE`      | Indica o tipo de dia (A, B ou C)             | `object`   |
+| `MISSING_DATA`  | Indica se há falta de dados                  | `bool`     |
+| `POLYLINE`      | Sequência de coordenadas geográficas do trajeto      | `object`   |
+
+</div>
+
+
+### Pré-processamento:
+- Etapa que antecede a Análise Exploratória, portanto, **os dados são preparados para melhor analisá-los**;
+- A primeira transformação é no nome das colunas para `snake_case`;
+- Transformação da variávei `timestamp` de segundos para um estilo mais legível, como dia-mês-ano;
+- Criação de novas variáveis a partir de `timestamp`: hora, dia, semana, mês, ano;
+- Novas colunas com os nomes dos dias e dos meses;
+- Filtragem de linhas para o período de Julho a Novembro de 2013;
+- Cálculo da distância percorrida (*Haversine distance*) pelos táxis a partir das coordenadas geográficas em `polyline`;
+- A partir das distâncias, percebeu-se que algumas eram muito grandes em relação às demais, pois algumas coordenadas estavam erradas (trajetos sobre o mar);
+- Por último, excluiu-se linhas em que a distância era muito grande (> 0.975) e muito pequena (<0.025);
 
 ## Análise Exploratória 
 
@@ -50,8 +81,22 @@ Assim, é possível melhorar a eficiência do sistema de despacho eletrônico de
 - Por outro lado, as maiores distâncias médias percorridas estão nessa faixa de horário, mais precisamente das 3h às 6h;
 - No resto do dia, as distâncias médias não oscilam tanto.
 
+## Feature Engineering
+- Após a Análise Exploratória, os dados são preparados para serem modelados na etapa de Machine Learning;
+- Criação de variáveis de início e fim dos trajetos, separados em latitude e longitude;
+- Exclusão de variáveis desnecessárias para o modelo;
+- One-Hot Encoding para `call_type`;
+- Substituição de *missing data* nas variáveis de identificação `origin_stand` e `origin_call` por zeros;
+- Train-test Split com amostra de tamanho 250 mil.
+
 ## Machine Learning
-...
+- Dado o tamanho do dataset, escolheu-se trabalhar com **lightgbm.LGBMRegressor**;
+- O modelo é reconhecido pela sua boa performance e rapidez com grandes datasets, como é o caso;
+- LGBM também apresenta boa eficiência de memória computacional;
+- Primeira modelagem sem alterações nos parâmetros e a segunda utilizando **GridSearchCV**;
+- O melhor modelo foi exportado em `pickle`;
+- Ao rodar o modelo salvo no dataset de teste, os resultados foram ainda melhores que os anteriores;
+- O erro apresentado com raio menor que 1 quilômetro no ponto de destino.
 
 # Performances
 
